@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Globalization;
-using System.IO.Compression;
+
 class Program
 {
-    static char[,] PreencherTabuleiroVazio(char[,] tabuleiro)
+    static void PreencherTabuleiroVazio(char[,] tabuleiro)
     { 
         for(int i = 0; i < tabuleiro.GetLength(0); i++)
         {
@@ -12,7 +11,6 @@ class Program
                 tabuleiro[i,j] = 'A';
             }
         }
-        return tabuleiro;
     }
     static void ImprimirTabuleiro(char[,] tabuleiro)
     {   Console.Write("   0 1 2 3 4 5 6 7 8 9");
@@ -28,26 +26,23 @@ class Program
         }
     }
 
-    static char[,] PreenchePosicao(char[,] tabuleiro, int coordX, int coordY, int tipoNavio, char posicaoNavio)
+    static void PreenchePosicao(char[,] tabuleiro, int coordX, int coordY, int tipoNavio, char posicaoNavio)
     {
-        char[,] tabuleiroPreenchido = tabuleiro;
         char[] sigla = {'S','H','C','E','P'};
         if(posicaoNavio == 'V')
         {
             for(int i = 0; i < tipoNavio; i++)
             {
-                tabuleiroPreenchido[coordX, coordY+i] = sigla[tipoNavio-1];
+                tabuleiro[coordX, coordY+i] = sigla[tipoNavio-1];
             }
         }
         else if(posicaoNavio == 'H')
         {
             for(int i = 0; i < tipoNavio; i++)
             {
-                tabuleiroPreenchido[coordX+i,coordY] = sigla[tipoNavio-1];
+                tabuleiro[coordX+i,coordY] = sigla[tipoNavio-1];
             }
         }
-        return tabuleiroPreenchido;
-
     }
     static bool VerificaPosicao(char[,] tabuleiro, int coordX, int coordY, int tipoNavio, char posicaoNavio)
     {
@@ -81,18 +76,52 @@ class Program
 
         return true;
     }
+    static string GerarNickname(string nomeCompleto)
+    {
+        string[] nickSplit = nomeCompleto.Split(" ");
+        string iniciais = "";
+        for(int i = 1; i < nickSplit.Length; i++)
+        {
+            iniciais += nickSplit[i][0];
+        }
+        
+        return nickSplit[0]+iniciais;
+    }
+
+    static bool ValidarJogada(char[,] tabuleiro, int coordX, int coordY)
+    {
+        char[] embarcacoes = {'S','H','C','E','P'};
+        for(int i = 0; i < embarcacoes.Length; i++)
+        {
+            if(tabuleiro[coordX,coordY] == embarcacoes[i])
+            {
+                Console.WriteLine("Belo tiro! Acertou em cheio em uma embarcação!");
+                tabuleiro[coordX,coordY] = 'T';
+                return true;
+            }
+            
+        }
+        if(tabuleiro[coordX,coordY] == 'T')
+        {
+            Console.WriteLine("Essa embarcação já foi atingida.");
+            return false;
+        }
+        else if(tabuleiro[coordX,coordY] == 'X')
+        {
+            Console.WriteLine("Tentativa inválida. Local já foi atingido.");
+            return false;
+        }
+        else
+        {
+            Console.WriteLine("Boa tentativa, mas esse tiro acertou na água!");
+            tabuleiro[coordX,coordY] = 'X';
+            return false;
+        }
+    }
 
     static void Main()
     {
-        char[,] teste = new char[10,10];
-        teste = PreencherTabuleiroVazio(teste);
-        ImprimirTabuleiro(teste);
-        PreenchePosicao(teste,5,5,3,'V');
-        ImprimirTabuleiro(teste);
-        PreenchePosicao(teste,0,0,5,'V');
-        ImprimirTabuleiro(teste);
-        PreenchePosicao(teste,2,0,4,'H');
-        ImprimirTabuleiro(teste);
+        
     }
 }
 
